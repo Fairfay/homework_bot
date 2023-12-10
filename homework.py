@@ -28,29 +28,27 @@ HOMEWORK_VERDICTS = {
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 def check_tokens():
-    """
-    Проверка токенов на наличие.
+    """Проверка токенов на наличие.
     Если токен не найден, завершаем программу с критической ошибкой.
     """
     if not PRACTICUM_TOKEN or not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         logging.critical('Отсутствуют токены.')
         sys.exit()
 
+
 def send_message(bot, message):
-    """
-    Отправляет текстовое сообщение в чат.
-    """
+    """Отправляет текстовое сообщение в чат."""
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logging.debug(f'Сообщение отправлено.')
     except telegram.TelegramError:
         logging.error('Сообщение не было отправлено.')
 
+
 def get_api_answer(timestamp):
-    """
-    Запрос к API.
-    """
+    """Запрос к API."""
     params = {'from_date': timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
@@ -67,10 +65,9 @@ def get_api_answer(timestamp):
     except requests.exceptions:
         logging.exception(f'Запрос не осуществлен {ENDPOINT}.')
 
+
 def check_response(response):
-    """
-    Проверка ответа от API.
-    """
+    """Проверка ответа от API."""
     if type(response) is not dict:
         logging.error('Вернулся не словарь.')
         raise TypeError
@@ -84,10 +81,9 @@ def check_response(response):
         logging.error("Некорректный ответ API.")
         raise KeyError
 
+
 def parse_status(homework):
-    """
-    Извлекает информацию о статусе д/р из словаря.
-    """
+    """Извлекает информацию о статусе д/р из словаря."""
     if homework:
         homework_name = homework.get('homework_name')
         if not homework_name:
@@ -104,10 +100,9 @@ def parse_status(homework):
         logging.error('Словарь пуст')
         raise KeyError
 
+
 def main():
-    """
-    Основная логика работы.
-    """
+    """Основная логика работы."""
     check_tokens()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = int(time.time())
