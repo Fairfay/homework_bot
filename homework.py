@@ -42,7 +42,7 @@ def send_message(bot, message):
     """Отправляет текстовое сообщение в чат."""
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
-        logging.debug(f'Сообщение отправлено.')
+        logging.debug('Сообщение отправлено.')
     except telegram.TelegramError:
         logging.error('Сообщение не было отправлено.')
 
@@ -59,7 +59,7 @@ def get_api_answer(timestamp):
             except json.decoder.JSONDecodeError:
                 logging.error('Ошибка преобразования типов данных.')
         else:
-            logging.error(f'Нет доступа к ENDPOINT: {ENDPOINT}.' 
+            logging.error(f'Нет доступа к ENDPOINT: {ENDPOINT}.'
                           f'Код ответа API: {response.status_code}.')
             raise AssertionError
     except requests.exceptions:
@@ -122,6 +122,7 @@ def main():
             send_message(bot, message)
         finally:
             time.sleep(RETRY_PERIOD)
+
 
 if __name__ == '__main__':
     main()
