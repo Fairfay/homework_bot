@@ -27,15 +27,21 @@ HOMEWORK_VERDICTS = {
 }
 
 logging.basicConfig(level=logging.DEBUG)
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('logfile.log')
+file_handler.setLevel(logging.DEBUG)
+
+logging.getLogger().addHandler(stream_handler)
+logging.getLogger().addHandler(file_handler)
 
 
 def check_tokens():
     """Проверка токенов на наличие.
     Если токен не найден, завершаем программу с критической ошибкой.
     """
-    if not PRACTICUM_TOKEN or not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-        logging.critical('Отсутствуют токены.')
-        sys.exit()
+    return all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
 
 
 def send_message(bot, message):
@@ -68,12 +74,12 @@ def get_api_answer(timestamp):
 
 def check_response(response):
     """Проверка ответа от API."""
-    if type(response) is not dict:
+    if not isinstance(response, dict):
         logging.error('Вернулся не словарь.')
         raise TypeError
     if 'current_date' in response and 'homeworks' in response:
-        if type(response['homeworks']) is not list:
-            logging.error('API не соответствует.')
+        if not isinstance(response['homeworks'], list):
+            logging.error('API не соответствует.') 
             raise TypeError
         homeworks = response.get('homeworks')
         return homeworks
@@ -103,6 +109,9 @@ def parse_status(homework):
 
 def main():
     """Основная логика работы."""
+    if not check_tokens():
+        logging.critical('Нет переменной')
+        sys.exit(1)
     check_tokens()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = int(time.time())
