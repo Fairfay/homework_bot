@@ -79,7 +79,7 @@ def check_response(response):
         raise TypeError
     if 'current_date' in response and 'homeworks' in response:
         if not isinstance(response['homeworks'], list):
-            logging.error('API не соответствует.') 
+            logging.error('API не соответствует.')
             raise TypeError
         homeworks = response.get('homeworks')
         return homeworks
